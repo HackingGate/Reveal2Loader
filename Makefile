@@ -1,5 +1,5 @@
 export THEOS_PACKAGE_DIR_NAME=./releases/debs
-export TARGET=:clang:latest:5.1
+export TARGET=:clang:latest:7.0
 export ARCHS=armv7 armv7s arm64
 export ADDITIONAL_CFLAGS = -Ithird-party/partialzip/include -Ithird-party/libcurl
 export SSH_ASKPASS = ./ssh-askpass
