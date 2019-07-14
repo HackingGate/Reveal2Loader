@@ -291,7 +291,7 @@ static size_t receiveDataBodyZLIBCompressed(unsigned char* data, size_t size, Re
 {
 	ReceiveBodyFileData *fileData = bodyData->currentFile;
 	bodyData->stream.next_in = data;
-	bodyData->stream.avail_in = size;
+	bodyData->stream.avail_in = (uInt)size;
 	unsigned char buffer[ZLIB_BUFFER_SIZE];
 	do {
 		bodyData->stream.next_out = buffer;
