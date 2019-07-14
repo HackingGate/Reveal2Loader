@@ -180,15 +180,16 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = RH;
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1100;
 				ORGANIZATIONNAME = "Richard Heard";
 			};
 			buildConfigurationList = 13E4B23E18DC1F3D00543170 /* Build configuration list for PBXProject "RHRevealLoader" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 13E4B23A18DC1F3D00543170;
 			productRefGroup = 13FC3DF618DC2E6400BA7BD5 /* Products */;
@@ -347,6 +348,7 @@
 		13FC3E0218DC2E6400BA7BD5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -358,6 +360,7 @@
 		13FC3E0318DC2E6400BA7BD5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
