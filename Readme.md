@@ -9,8 +9,7 @@ For more info see [revealapp.com](http://revealapp.com)
 
 
 ## How to Install
-1) Follow the instructions here(https://hackinggate.com/2019/06/11/inspect-the-view-hierarchy-of-any-ios-apps-on-ios-12.html).
-2) Swap out https://github.com/HackingGate/Reveal2Loader.git with https://github.com/divyeshmakwana96/Reveal3Loader.git
+Follow the instructions here(https://hackinggate.com/2019/06/11/inspect-the-view-hierarchy-of-any-ios-apps-on-ios-12.html).
 
 ## How to Use
 Open 'Settings > Reveal > Enabled Applications' and toggle the application or applications that you want to debug to on.
