@@ -18,12 +18,9 @@ char endianness = IS_LITTLE_ENDIAN;
 #endif
 
 //download libReveal using partialzip
-
-NSString *downloadURL = @"https://downloads.hackinggate.com/Reveal/RevealServer.zip";
-NSString *zipPath = @"RevealServer/iOS/RevealServer.framework/RevealServer";
-
-NSString *folder = @"/Library/RHRevealLoader";
-NSString *filename = @"RevealServer";
+NSString *appDownloadURL = @"https://dl.devmate.com/com.ittybittyapps.Reveal2/Reveal.zip";
+NSString *libFolderPath = @"/Library/RHRevealLoader";
+NSString *libExecutableFileName = @"RevealServer";
 
 struct partialFile {
     unsigned char *pos;
@@ -50,8 +47,54 @@ size_t data_callback(ZipInfo* info, CDFile* file, unsigned char *buffer, size_t 
     return size;
 }
 
+int download_extract(NSString *downloadURL, NSString *zipLookupPath, NSString *folder) {
+    printf("Downloading '%s /%s'\n", [downloadURL UTF8String], [zipLookupPath UTF8String]);
+    
+    ZipInfo* info = PartialZipInit([downloadURL UTF8String]);
+    if(!info) {
+        printf("Cannot find %s\n", [downloadURL UTF8String]);
+        return 0;
+    }
+    
+    CDFile *file = PartialZipFindFile(info, [zipLookupPath UTF8String]);
+    if(!file) {
+        printf("Cannot find %s in %s\n", [zipLookupPath UTF8String], [downloadURL UTF8String]);
+        return 0;
+    }
+    
+    int dataLen = file->size;
+
+    unsigned char *data = malloc(dataLen+1);
+    struct partialFile pfile = (struct partialFile){data, dataLen, 0};
+    
+    PartialZipGetFile(info, file, data_callback, &pfile);
+    *(pfile.pos) = '\0';
+    
+    PartialZipRelease(info);
+    
+    NSData *zipData = [NSData dataWithBytes:data length:dataLen];
+    
+    if (![[NSFileManager defaultManager] createDirectoryAtPath:folder withIntermediateDirectories:YES attributes:nil error:nil]){
+        printf("Failed to create folder %s\n", [folder UTF8String]);
+        return 0;
+    }
+    
+    NSString *filename = zipLookupPath.lastPathComponent;
+    NSString *targetFilePath = [folder stringByAppendingPathComponent:filename];
+
+    if (![zipData writeToFile:targetFilePath atomically:YES]) {
+        printf("Failed to write file to path %s\n", [targetFilePath UTF8String]);
+        return 0;
+    }
+    
+    free(data);
+    printf("Successfully downloaded %s to path %s\n", [downloadURL UTF8String], [targetFilePath UTF8String]);
+    
+    return 0;
+}
+
 int main(int argc, const char *argv[], const char *envp[]){
-    NSString *libraryPath = [folder stringByAppendingPathComponent:filename];
+    NSString *libraryPath = [libFolderPath stringByAppendingPathComponent:libExecutableFileName];
     
     if (argc > 1 && strcmp(argv[1], "upgrade") != 0) {
         printf("CYDIA upgrade, nuking existing %s\n", [libraryPath UTF8String]);
@@ -59,46 +102,20 @@ int main(int argc, const char *argv[], const char *envp[]){
     }
     
     if (![[NSFileManager defaultManager] fileExistsAtPath:libraryPath]) {
-        //download libReveal.dylib
-        printf("Downloading '%s /%s' to '%s'.\n", [downloadURL UTF8String], [zipPath UTF8String], [libraryPath UTF8String]);
-
         
-        ZipInfo* info = PartialZipInit([downloadURL UTF8String]);
-        if(!info) {
-            printf("Cannot find %s\n", [downloadURL UTF8String]);
-            return 0;
+        // 1) extract zip
+        if (download_extract(appDownloadURL, @"Reveal.app/Contents/SharedSupport/RevealServer.zip", libFolderPath)) {
+            printf("zip downloaded");
         }
         
-        CDFile *file = PartialZipFindFile(info, [zipPath UTF8String]);
-        if(!file) {
-            printf("Cannot find %s in %s\n", [zipPath UTF8String], [downloadURL UTF8String]);
-            return 0;
+        // 2) extract framework
+        NSString *intermediateZipFileURL = [[NSURL fileURLWithPath:[libFolderPath stringByAppendingPathComponent:@"RevealServer.zip"]] absoluteString];
+        if (download_extract(intermediateZipFileURL, [@"RevealServer/iOS/RevealServer.framework" stringByAppendingPathComponent:libExecutableFileName], libFolderPath)) {
+            printf("%s extracted", [libExecutableFileName UTF8String]);
         }
         
-        int dataLen = file->size;
-
-        unsigned char *data = malloc(dataLen+1);
-        struct partialFile pfile = (struct partialFile){data, dataLen, 0};
-        
-        PartialZipGetFile(info, file, data_callback, &pfile);
-        *(pfile.pos) = '\0';
-        
-        PartialZipRelease(info);
-        
-        NSData *dylibData = [NSData dataWithBytes:data length:dataLen];
-        
-        if (![[NSFileManager defaultManager] createDirectoryAtPath:folder withIntermediateDirectories:YES attributes:nil error:nil]){
-            printf("Failed to create folder %s\n", [folder UTF8String]);
-            return 0;
-        }
-
-        if (![dylibData writeToFile:libraryPath atomically:YES]){
-            printf("Failed to write file to path %s\n", [libraryPath UTF8String]);
-            return 0;
-        }
-        
-        free(data);
-        printf("Successfully downloaded %s to path %s\n", [downloadURL UTF8String], [libraryPath UTF8String]);
+        // 3) cleanup
+        [[NSFileManager defaultManager] removeItemAtPath:[libFolderPath stringByAppendingPathComponent:@"RevealServer.zip"] error:nil];
     
     } else {
         printf("RevealServer already exists at path %s\n", [libraryPath UTF8String]);
