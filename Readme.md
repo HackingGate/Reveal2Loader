@@ -9,16 +9,8 @@ For more info see [revealapp.com](http://revealapp.com)
 
 
 ## How to Install
-Reveal Loader is available directly inside Cydia. Just search for the "Reveal Loader" development package.
-
-## How to Install - Custom
-See [here](http://www.ijailbreak.com/cydia/how-to-add-a-cydia-repository/) for how to add a Repository to Cydia.
-
-Navigate to 'Cydia > Sources Tab > Edit > Add' and enter the below source URL.
-
-`http://rheard.com/cydia`
-
-Finally, search for Reveal Loader on the Packages Tab and select install. 
+1) Follow the instructions here(https://hackinggate.com/2019/06/11/inspect-the-view-hierarchy-of-any-ios-apps-on-ios-12.html).
+2) Swap out https://github.com/HackingGate/Reveal2Loader.git with https://github.com/divyeshmakwana96/Reveal3Loader.git
 
 ## How to Use
 Open 'Settings > Reveal > Enabled Applications' and toggle the application or applications that you want to debug to on.
@@ -26,6 +18,3 @@ Open 'Settings > Reveal > Enabled Applications' and toggle the application or ap
 Launch the target application and it should appear inside Reveal.app on your Mac. 
 
 (You will likely need to quit and relaunch the target application)
-
-## Be Social
-Follow me on [Twitter](https://twitter.com/intent/follow?screen_name=heardrwt) (@heardrwt)
